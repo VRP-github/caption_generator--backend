@@ -1,0 +1,24 @@
+databases:
+  - name: instagram-caption-db
+    plan: free
+    databaseName: instagram_captions
+    user: instagram_user
+
+services:
+  - type: web
+    plan: free
+    name: instagram-caption-generator
+    runtime: python
+    buildCommand: './build.sh'
+    startCommand: 'python -m gunicorn instagram_caption_generator.wsgi:application'
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: instagram-caption-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: GEMINI_API_KEY
+        value: AIzaSyBKNfdnNfZMisSIqpIwJfW2IBgM5CY3Uvc
